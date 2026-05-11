@@ -4,6 +4,7 @@ import base64
 import pickle
 import pandas as pd
 import os
+import time
 
 BASE_PATH = os.environ.get('AIRFLOW_HOME', '/workspaces/class_kafka')
 DATA_DIR = f"{BASE_PATH}/data/ml"
