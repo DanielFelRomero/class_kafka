@@ -2,14 +2,18 @@
   "name": "Entorno Airflow y Kafka",
   "image": "mcr.microsoft.com/devcontainers/python:3.11",
   "features": {
-    "ghcr.io/devcontainers/features/java:1": { "version": "17" },
-    "ghcr.io/devcontainers/features/postgres:1": { "version": "latest" }
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17"
+    },
+    "ghcr.io/devcontainers/features/postgres:1": {
+      "version": "latest"
+    }
   },
   "remoteEnv": {
     "AIRFLOW_HOME": "${containerWorkspaceFolder}",
     "AIRFLOW__CORE__LOAD_EXAMPLES": "False"
   },
-  "forwardPorts": [8080, 8501, 9092],
+  "forwardPorts": [8080, 8501, 9092, 5432],
   "portsAttributes": {
     "8080": {
       "label": "Airflow UI",
@@ -20,6 +24,7 @@
       "onAutoForward": "notify"
     }
   },
+  "postStartCommand": "sudo service postgresql start",
   "postCreateCommand": "pip install -r requirements.txt",
   "customizations": {
     "vscode": {
