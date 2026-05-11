@@ -4,9 +4,6 @@
   "features": {
     "ghcr.io/devcontainers/features/java:1": {
       "version": "17"
-    },
-    "ghcr.io/devcontainers/features/postgres:1": {
-      "version": "latest"
     }
   },
   "remoteEnv": {
@@ -25,7 +22,7 @@
     }
   },
   "postStartCommand": "sudo service postgresql start",
-  "postCreateCommand": "pip install -r requirements.txt",
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y postgresql && sudo service postgresql start && sudo -u postgres psql -c \"ALTER USER postgres PASSWORD 'postgres';\" && pip install -r requirements.txt",
   "customizations": {
     "vscode": {
       "settings": {
