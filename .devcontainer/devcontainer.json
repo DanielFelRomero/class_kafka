@@ -1,6 +1,8 @@
 {
-  "name": "Entorno Airflow",
-  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "name": "Entorno Airflow y Kafka",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "remoteEnv": {
     "AIRFLOW_HOME": "${containerWorkspaceFolder}",
     "AIRFLOW__CORE__LOAD_EXAMPLES": "False"
@@ -16,7 +18,6 @@
       "onAutoForward": "notify"
     }
   },
-  "postCreateCommand": "pip install -r requirements.txt",
   "customizations": {
     "vscode": {
       "settings": {
