@@ -117,14 +117,28 @@ def produce_dt():
     p.produce('topic_model_dt', value=json_payload.encode('utf-8'), callback=delivery_report)
     p.flush()
 
-def produce_test_data():
+def produce_test_batch():
     p = Producer(KAFKA_CONF)
     test_df = pd.read_csv(f"{DATA_DIR}/test.csv")
     
     # Enviar datos como JSON
     records = test_df.to_dict(orient='records')
-    p.produce('topic_test_data', value=json.dumps(records).encode('utf-8'), callback=delivery_report)
+    p.produce('topic_test_batch', value=json.dumps(records).encode('utf-8'), callback=delivery_report)
     p.flush()
+
+def produce_test_stream():
+    p = Producer(KAFKA_CONF)
+    test_df = pd.read_csv(f"{DATA_DIR}/test.csv")
+    print(f"Iniciando streaming de {len(test_df)} registros...")
+    
+    for index, row in test_df.iterrows():
+        record = row.to_dict()
+        p.produce('topic_test_stream', value=json.dumps(record).encode('utf-8'))
+        p.poll(0) # Libera eventos
+        time.sleep(1) # Simula el tiempo real
+        
+    p.flush()
+    print("Streaming finalizado.")
 
 # --- Definición del Grafo ---
 with DAG('churn_ml_kafka_pipeline', default_args=default_args, schedule_interval=None, catchup=False) as dag:
@@ -133,9 +147,10 @@ with DAG('churn_ml_kafka_pipeline', default_args=default_args, schedule_interval
     t3 = PythonOperator(task_id='train_dt', python_callable=train_dt_model)
     t4 = PythonOperator(task_id='produce_lr', python_callable=produce_lr)
     t5 = PythonOperator(task_id='produce_dt', python_callable=produce_dt)
-    t6 = PythonOperator(task_id='produce_test', python_callable=produce_test_data)
+    
+    t6_batch = PythonOperator(task_id='produce_test_batch', python_callable=produce_test_batch)
+    t6_stream = PythonOperator(task_id='produce_test_stream', python_callable=produce_test_stream)
 
     t1 >> [t2, t3]
-    t2 >> t4
-    t3 >> t5
-    [t4, t5] >> t6
+    t2 >> t4 >> t6_batch
+    t3 >> t5 >> t6_stream
