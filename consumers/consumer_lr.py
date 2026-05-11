@@ -2,6 +2,7 @@ from confluent_kafka import Consumer
 import pickle
 import json
 import pandas as pd
+import os
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 
 BASE_PATH = os.environ.get('AIRFLOW_HOME', '/workspaces/class_kafka')
@@ -42,11 +43,11 @@ try:
             print(f"MAE: {mean_absolute_error(y_test, predictions):.4f}")
             print(f"RMSE: {mean_squared_error(y_test, predictions, squared=False):.4f}")
             
-            # Guardar para Streamlit
+            # Guardar para Streamlit usando la ruta dinámica
             df['prediction_lr'] = predictions
-            df.to_csv('/opt/airflow/data/ml/results_lr.csv', index=False)
+            df.to_csv(f'{DATA_DIR}/results_lr.csv', index=False)
 
-            print("\nProcesamiento terminado.")
+            print("\nProcesamiento terminado. Guardado en CSV.")
 
             break
 
