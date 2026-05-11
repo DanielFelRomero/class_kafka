@@ -1,9 +1,3 @@
-¡Claro que sí! Un buen proyecto necesita una buena documentación, especialmente si lo vas a usar para una clase.
-
-Aquí tienes un **`README.md`** completo, estructurado y listo para copiar y pegar en la raíz de tu repositorio. Está redactado pensando en que tus estudiantes o cualquier otra persona que clone el proyecto pueda entender la arquitectura y ejecutar el laboratorio paso a paso sin perderse.
-
----
-
 ```markdown
 # 🚀 Pipeline de Machine Learning Orientado a Eventos: Batch vs Streaming
 
