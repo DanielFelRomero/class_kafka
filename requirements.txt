@@ -13,5 +13,5 @@ confluent-kafka==2.3.0
 jsonpickle
 
 # ── Visualización ──────────────────────────────────────────────────────────────
-streamlit==1.32.0
+streamlit
 plotly
