@@ -3,45 +3,55 @@ import json
 import base64
 import pickle
 import pandas as pd
-from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
+import os
 
 conf = {
     'bootstrap.servers': 'localhost:9092',
-    'group.id': 'group_dt',
-    'auto.offset.reset': 'earliest',
-    'enabvle.auto.commit': True
+    'group.id': 'group_dt_stream',
+    'auto.offset.reset': 'earliest'
 }
 c = Consumer(conf)
-c.subscribe(['topic_model_dt', 'topic_test_data'])
+c.subscribe(['topic_model_dt', 'topic_test_stream'])
 
 model = None
-print("Escuchando modelo DT y datos de test...")
+path_dt = '/opt/airflow/data/ml/results_dt.csv'
 
-while True:
-    msg = c.poll(1.0)
-    if msg is None: continue
-    if msg.error(): continue
+# Limpiar resultados anteriores para el demo
+if os.path.exists(path_dt):
+    os.remove(path_dt)
 
-    if msg.topic() == 'topic_model_dt':
-        # Deserialización del JSON
-        payload = json.loads(msg.value().decode('utf-8'))
-        model_bytes = base64.b64decode(payload['model_base64'])
-        model = pickle.loads(model_bytes)
-        print("Modelo DT recibido vía JSON.")
-        
-    elif msg.topic() == 'topic_test_data' and model is not None:
-        test_data = json.loads(msg.value().decode('utf-8'))
-        df = pd.DataFrame(test_data)
-        
-        X_test = df[['usage_minutes', 'customer_service_calls', 'monthly_charge']]
-        y_test = df['churn_risk']
-        predictions = model.predict(X_test)
-        
-        print("\n--- MÉTRICAS TEST DECISION TREE ---")
-        print(f"R2: {r2_score(y_test, predictions):.4f}")
-        print(f"MAE: {mean_absolute_error(y_test, predictions):.4f}")
-        print(f"RMSE: {mean_squared_error(y_test, predictions, squared=False):.4f}")
-        
-        # Guardar para Streamlit
-        df['prediction_dt'] = predictions
-        df.to_csv('/opt/airflow/data/ml/results_dt.csv', index=False)
+print("Escuchando modelo DT y eventos de streaming...")
+
+try:
+    while True:
+        msg = c.poll(1.0)
+        if msg is None: continue
+        if msg.error(): continue
+    
+        if msg.topic() == 'topic_model_dt':
+            payload = json.loads(msg.value().decode('utf-8'))
+            model = pickle.loads(base64.b64decode(payload['model_base64']))
+            print("✅ Modelo Decision Tree cargado.")
+            
+        elif msg.topic() == 'topic_test_stream' and model is not None:
+            # 1. Recibe UN SOLO registro en streaming
+            record = json.loads(msg.value().decode('utf-8'))
+            df_single = pd.DataFrame([record])
+            
+            # 2. Predicción en tiempo real
+            X_test = df_single[['usage_minutes', 'customer_service_calls', 'monthly_charge']]
+            pred = model.predict(X_test)[0]
+            df_single['prediction_dt'] = pred
+            
+            # 3. Anexar (Append) a la "base de datos"
+            if not os.path.isfile(path_dt):
+                df_single.to_csv(path_dt, index=False) # Crea el archivo con cabeceras
+            else:
+                df_single.to_csv(path_dt, mode='a', header=False, index=False) # Agrega la fila
+                
+            print(f" Evento procesado -> UserID: {record['user_id']} | Predicción Churn: {pred:.2f}")
+
+except KeyboardInterrupt:
+    print("Deteniendo consumer...")
+finally:
+    c.close()
