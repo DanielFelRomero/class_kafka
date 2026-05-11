@@ -59,4 +59,5 @@ try:
 except KeyboardInterrupt:
     print("Deteniendo consumer...")
 finally:
+    print("Cerrando consumer_dt...")
     c.close()
