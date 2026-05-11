@@ -137,9 +137,9 @@ def produce_test_stream():
         record = row.to_dict()
         p.produce('topic_test_stream', value=json.dumps(record).encode('utf-8'))
         p.poll(0) # Libera eventos
+        p.flush()
         time.sleep(1) # Simula el tiempo real
         
-    p.flush()
     print("Streaming finalizado.")
 
 # --- Definición del Grafo ---
