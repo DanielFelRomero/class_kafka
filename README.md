@@ -55,26 +55,8 @@ rm -rf /tmp/kraft-combined-logs
 chmod +x setup_kafka.sh
 ./setup_kafka.sh
 
-# 1. Definir que usaremos LocalExecutor y la conexión a Postgres
-export AIRFLOW__CORE__EXECUTOR=LocalExecutor
-export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://postgres:postgres@localhost:5432/postgres
-
-# 2. Inicializar la nueva base de datos (esta vez en Postgres)
-airflow db init
-
-# 3. Crear tu usuario administrador
-airflow users create \
-    --username admin \
-    --firstname Daniel \
-    --lastname Romero \
-    --role Admin \
-    --email admin@example.com \
-    --password admin
-
-# 4. Iniciar el servidor web y el planificador (Scheduler)
-airflow webserver -p 8080 &
-airflow schedulere
-
+export AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX=True
+python -m airflow standalone
 ```
 
 *(Nota: Guarda la contraseña de `admin` que imprime Airflow en consola).*
