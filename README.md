@@ -72,6 +72,9 @@ airflow users create \
     --password admin
 
 # 4. Iniciar el servidor web y el planificador (Scheduler)
+export AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX=True
+export AIRFLOW__WEBSERVER__WTF_CSRF_ENABLED=False
+
 airflow webserver -p 8080 &
 airflow scheduler
 
