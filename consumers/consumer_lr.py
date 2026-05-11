@@ -24,7 +24,7 @@ while True:
         model = pickle.loads(msg.value())
         print("Modelo LR recibido vía Pickle.")
         
-    elif msg.topic() == 'topic_test_data' and model is not None:
+    elif msg.topic() == 'topic_test_batch' and model is not None:
         test_data = json.loads(msg.value().decode('utf-8'))
         df = pd.DataFrame(test_data)
         
