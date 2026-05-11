@@ -115,3 +115,24 @@ Una vez ejecutado el trigger en la Terminal 4:
 ```
 
 ```
+
+## 🕵️‍♂️ Auditoría y Monitoreo de Kafka (CLI)
+
+Puedes abrir una quinta terminal para ejecutar comandos de diagnóstico mientras el pipeline está corriendo:
+
+* **1. Ver si el servidor (Broker) está vivo y listar tópicos:**
+  ```bash
+  ./kafka_2.13-3.7.0/bin/kafka-topics.sh --list --bootstrap-server localhost:9092
+  ```
+2. Monitorear el "Lag" (Retraso) del Consumidor de Streaming:
+Este comando muestra cuántos mensajes faltan por leer. Si el "LAG" es 0, el consumidor está al día.
+
+ ```bash
+   ./kafka_2.13-3.7.0/bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group group_dt_stream
+  ```
+3. Espiar el tráfico en vivo (Sniffing):
+Actúa como un consumidor fantasma leyendo todo lo que pasa por el tópico.
+
+ ```bash
+  ./kafka_2.13-3.7.0/bin/kafka-console-consumer.sh --topic topic_test_stream --bootstrap-server localhost:9092
+ ```
