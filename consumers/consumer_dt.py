@@ -5,6 +5,12 @@ import pickle
 import pandas as pd
 import os
 
+BASE_PATH = os.environ.get('AIRFLOW_HOME', '/workspaces/class_kafka')
+DATA_DIR = f"{BASE_PATH}/data/ml"
+os.makedirs(DATA_DIR, exist_ok=True)
+
+path_dt = f'{DATA_DIR}/results_dt.csv'
+
 conf = {
     'bootstrap.servers': 'localhost:9092',
     'group.id': 'group_dt_stream',
@@ -14,7 +20,6 @@ c = Consumer(conf)
 c.subscribe(['topic_model_dt', 'topic_test_stream'])
 
 model = None
-path_dt = '/opt/airflow/data/ml/results_dt.csv'
 
 # Limpiar resultados anteriores para el demo
 if os.path.exists(path_dt):
