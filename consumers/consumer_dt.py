@@ -55,6 +55,7 @@ try:
                 df_single.to_csv(path_dt, mode='a', header=False, index=False) # Agrega la fila
                 
             print(f" Evento procesado -> UserID: {record['user_id']} | Predicción Churn: {pred:.2f}")
+            time.sleep(0.5)
 
 except KeyboardInterrupt:
     print("Deteniendo consumer...")
