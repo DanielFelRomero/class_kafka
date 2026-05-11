@@ -1,0 +1,23 @@
+{
+  "name": "Entorno Airflow",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "remoteEnv": {
+    "AIRFLOW_HOME": "${containerWorkspaceFolder}",
+    "AIRFLOW__CORE__LOAD_EXAMPLES": "False"
+  },
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "Airflow UI",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "pip install -r requirements.txt",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python"
+      ]
+    }
+  }
+}
