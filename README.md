@@ -1,4 +1,3 @@
-```markdown
 # 🚀 Pipeline de Machine Learning Orientado a Eventos: Batch vs Streaming
 
 Bienvenido al repositorio práctico del laboratorio de Arquitectura de Datos y Machine Learning. En este proyecto implementamos un flujo de datos completo utilizando **Apache Airflow**, **Apache Kafka** y **Streamlit** para simular y comparar el rendimiento de modelos predictivos en escenarios de procesamiento por lotes (Batch) y en tiempo real (Streaming).
