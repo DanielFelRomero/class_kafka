@@ -2,9 +2,8 @@
   "name": "Entorno Airflow y Kafka",
   "image": "mcr.microsoft.com/devcontainers/python:3.11",
   "features": {
-    "ghcr.io/devcontainers/features/java:1": {
-      "version": "17"
-    }
+    "ghcr.io/devcontainers/features/java:1": { "version": "17" },
+    "ghcr.io/devcontainers/features/postgres:1": { "version": "latest" }
   },
   "remoteEnv": {
     "AIRFLOW_HOME": "${containerWorkspaceFolder}",
