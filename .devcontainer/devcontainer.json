@@ -1,18 +1,23 @@
 {
-  "name": "Entorno Airflow",
-  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "name": "Entorno Airflow y Kafka",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "remoteEnv": {
     "AIRFLOW_HOME": "${containerWorkspaceFolder}",
     "AIRFLOW__CORE__LOAD_EXAMPLES": "False"
   },
-  "forwardPorts": [8080],
+  "forwardPorts": [8080, 8501, 9092],
   "portsAttributes": {
     "8080": {
       "label": "Airflow UI",
       "onAutoForward": "notify"
+    },
+    "8501": {
+      "label": "Streamlit Dashboard",
+      "onAutoForward": "notify"
     }
   },
-  "postCreateCommand": "pip install -r requirements.txt",
   "customizations": {
     "vscode": {
       "extensions": [
