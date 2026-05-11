@@ -29,30 +29,31 @@ default_args = {
 # --- 1. Generar Datos ---
 def generate_and_split_data():
     np.random.seed(42)
-    # Generamos un dataset aleatorio donde churn_risk es continuo (Regresión)
-    usage_minutes = np.random.randint(10, 1000, 1000),
-    customer_service_calls = np.random.randint(0, 10, 1000),
-    monthly_charge = np.random.uniform(10.0, 120.0, 1000)
-
-    # Construcción del logit
-    logit = (
-        -0.002 * usage_minutes
-        + 0.35 * customer_service_calls
-        + 0.025 * monthly_charge
-        + np.random.normal(0, 1.0, n)
-    )
-
-    churn_risk = 1 / (1 + np.exp(-logit))
     
+    # 1. Primero creamos el DataFrame con las variables independientes
     df = pd.DataFrame({
         'user_id': range(1, 1001),
-        'usage_minutes': usage_minutes,
-        'customer_service_calls': customer_service_calls,
-        'monthly_charge': monthly_charge,
-        'churn_risk': churn_risk
+        'usage_minutes': np.random.randint(10, 1000, 1000),
+        'customer_service_calls': np.random.randint(0, 10, 1000),
+        'monthly_charge': np.random.uniform(10.0, 120.0, 1000)
     })
     
+    # 2. Luego calculamos el churn_risk usando las columnas de Pandas directamente.
+    # Al hacer df['columna'] * float, Pandas hace el cálculo para cada fila automáticamente sin dar error.
+    riesgo_calculado = (
+        (-0.002 * df['usage_minutes']) + 
+        (0.08 * df['customer_service_calls']) + 
+        (0.005 * df['monthly_charge'])
+    )
+    
+    # 3. Normalizamos el riesgo para que quede estrictamente entre 0.0 y 1.0
+    # (Para evitar que la regresión lineal reciba números negativos o mayores a 1)
+    df['churn_risk'] = (riesgo_calculado - riesgo_calculado.min()) / (riesgo_calculado.max() - riesgo_calculado.min())
+    
+    # 4. Separar y guardar
     train, test = train_test_split(df, test_size=0.2, random_state=42)
+    
+    # Asegúrate de que DATA_DIR esté definido arriba en tu archivo
     train.to_csv(f"{DATA_DIR}/train.csv", index=False)
     test.to_csv(f"{DATA_DIR}/test.csv", index=False)
     print("Datos generados y separados (80/20).")
