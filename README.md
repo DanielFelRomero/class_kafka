@@ -65,8 +65,8 @@ airflow db init
 # 3. Crear tu usuario administrador
 airflow users create \
     --username admin \
-    --firstname Daniel \
-    --lastname Romero \
+    --firstname Name \
+    --lastname Lastname \
     --role Admin \
     --email admin@example.com \
     --password admin
@@ -105,6 +105,9 @@ python consumers/consumer_dt.py
 Usa la interfaz de línea de comandos de Airflow para quitar la pausa al DAG y ejecutarlo sin necesidad de entrar a la UI web:
 
 ```bash
+export AIRFLOW__CORE__EXECUTOR=LocalExecutor
+export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://postgres:postgres@localhost:5432/postgres
+
 airflow dags unpause churn_ml_kafka_pipeline
 airflow dags trigger churn_ml_kafka_pipeline
 
@@ -127,9 +130,6 @@ Una vez ejecutado el trigger en la Terminal 4:
 
 ⚠️ **Importante:** Recuerda detener tu Codespace desde [github.com/codespaces](https://github.com/codespaces) una vez termines tu práctica para no consumir tu cuota gratuita.
 
-```
-
-```
 
 ## 🕵️‍♂️ Auditoría y Monitoreo de Kafka (CLI)
 
