@@ -47,5 +47,5 @@ while True:
             else:
                 st.info("⏳ Esperando eventos en streaming...")
     
-    # Pausa de 1.5 segundos antes de volver a leer el CSV y repintar
-    time.sleep(1.5)
+    # Pausa de 0.5 segundos antes de volver a leer el CSV y repintar
+    time.sleep(0.5)
