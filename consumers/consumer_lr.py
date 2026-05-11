@@ -10,7 +10,7 @@ conf = {
     'auto.offset.reset': 'earliest'
 }
 c = Consumer(conf)
-c.subscribe(['topic_model_lr', 'topic_test_data'])
+c.subscribe(['topic_model_lr', 'topic_test_batch'])
 
 model = None
 print("Escuchando modelo LR y datos de test...")
