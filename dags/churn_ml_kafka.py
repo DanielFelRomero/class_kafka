@@ -8,6 +8,8 @@ import json
 import base64
 import time
 import os
+import threading
+import sched
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
@@ -128,19 +130,35 @@ def produce_test_batch():
     p.produce('topic_test_batch', value=json.dumps(records).encode('utf-8'), callback=delivery_report)
     p.flush()
 
+
+
+s = sched.scheduler(time.time, time.sleep)
+
 def produce_test_stream():
     p = Producer(KAFKA_CONF)
     test_df = pd.read_csv(f"{DATA_DIR}/test.csv")
     print(f"Iniciando streaming de {len(test_df)} registros...")
+
+    # Convertimos el DataFrame a una lista de diccionarios para facilitar el manejo
+    records = test_df.to_dict('records')
     
-    for index, row in test_df.iterrows():
-        record = row.to_dict()
-        p.produce('topic_test_stream', value=json.dumps(record).encode('utf-8'))
-        p.poll(0) # Libera eventos
-        p.flush()
-        time.sleep(1) # Simula el tiempo real
-        
-    print("Streaming finalizado.")
+    def send_record(index):
+        if index < len(records):
+            # Enviar el registro actual
+            record = records[index]
+            p.produce('topic_test_stream', value=json.dumps(record).encode('utf-8'))
+            p.poll(0)
+            p.flush()
+            
+            # Programar el SIGUIENTE registro en 1 segundo
+            s.enter(1, 1, send_record, argument=(index + 1,))
+        else:
+            print("Streaming finalizado.")
+
+    # Programar el primer envío inmediatamente
+    s.enter(0, 1, send_record, argument=(0,))
+    
+    threading.Thread(target=s.run, daemon=True).start()
 
 # --- Definición del Grafo ---
 with DAG('churn_ml_kafka_pipeline', default_args=default_args, schedule_interval=None, catchup=False) as dag:
