@@ -6,8 +6,9 @@ import time
 st.set_page_config(page_title="Monitor ML Churn", layout="wide")
 st.title("Monitor Híbrido: Batch vs Streaming")
 
-path_lr = '/opt/airflow/data/ml/results_lr.csv'
-path_dt = '/opt/airflow/data/ml/results_dt.csv'
+BASE_PATH = os.environ.get('AIRFLOW_HOME', '/workspaces/class_kafka')
+path_lr = f'{BASE_PATH}/data/ml/results_lr.csv'
+path_dt = f'{BASE_PATH}/data/ml/results_dt.csv'
 
 # Contenedor dinámico que se actualizará
 placeholder = st.empty()
